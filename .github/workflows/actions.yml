@@ -2,37 +2,41 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" ] # 当向master分支进行git push时触发该工作流
+    branches: [ "master" ] 
   pull_request:
-    branches: [ "master" ] # 当向master分支合并分支时触发该工作流
+    branches: [ "master" ] 
 
-# 工作流具体执行的任务
 jobs:
-  build:
-
-    runs-on: ubuntu-latest # 运行在虚拟机上，指定虚拟机及其版本
+  compile:
+    runs-on: ubuntu-latest
+    name: Running Java 
     steps:
-      - name: pull latest code
-        uses: actions/checkout@v3 # 使用官方的checkout action，用于将仓库中的最新代码检查并拉取到工作目录中
+    - uses: actions/checkout@master
+    - name: Set up JDK 8
+      uses: actions/setup-java@master
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+        cache: maven
+    - name: Build with Maven
+      run: mvn clean package --file pom.xml
+    - name: 将 JAR 包部署到服务器
+      uses: garygrossgarten/github-action-scp@release
+      with:
+          local: target/springSecurity_project-0.0.1-SNAPSHOT.jar
+          remote: www/springSecurity_project-0.0.1-SNAPSHOT.jar
+          host: 124.71.99.191
+          username: chen
+          password: use6953136
+              
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+          host: 124.71.99.191
+          username: chen
+          password: use6953136
+          port: 22
+          script: |
+            cd /www
+            nohup java -jar springSecurity_project-0.0.1-SNAPSHOT.jar > wechart.log 2>&1 &
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v3 # 安装java环境的action
-        with:
-          java-version: '8.0' # 指定jkd版本
-          distribution: 'temurin'
-          cache: maven # 使用maven缓存，避免每次构建项目时都要重新下载maven依赖
-
-      - name: Build docker image
-        run: | 									 
-          docker build -t dingsai-backend:0.1 .    # 构建docker镜像，命令最后的点代表Dockerfile所在目录
-          docker save -o dingsai-backend.tar dingsai-backend:0.1 # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
-      - name: delete old docker image
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
-      - name: delete old docker tar
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd www && rm -f dingsai-backend.tar"
-      - name: upload new docker image and start-up script
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar root@${{secrets.REMOTE_SERVER01_IP}}:www
-      - name: load new docker image
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i www/dingsai-backend.tar"
-      - name: run project
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker run -d -p 8081:8081 --name dingsai-backend dingsai-backend:0.1"
