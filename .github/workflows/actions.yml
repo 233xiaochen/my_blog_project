@@ -23,6 +23,9 @@ jobs:
           docker buildx inspect --bootstrap
           docker buildx build --platform linux/amd64,linux/arm64 -t spring-boot-app:latest .
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Deploy to remote server  # 部署到远程服务器
         uses: appleboy/ssh-action@master
         with:
