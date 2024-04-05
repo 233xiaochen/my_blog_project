@@ -23,16 +23,16 @@ jobs:
           cache: maven # 使用maven缓存，避免每次构建项目时都要重新下载maven依赖
 
       - name: Build docker image
-        run: | 									   # run：该步骤要执行的命令，| 代表可以有多条命令
+        run: | 									 
           docker build -t dingsai-backend:0.1 .    # 构建docker镜像，命令最后的点代表Dockerfile所在目录
           docker save -o dingsai-backend.tar dingsai-backend:0.1 # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
       - name: delete old docker image
         run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
       - name: delete old docker tar
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd ${{secrets.REMOTE_PROJECT_CATALOGUE}} && rm -f dingsai-backend.tar"
+        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd www && rm -f dingsai-backend.tar"
       - name: upload new docker image and start-up script
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar root@${{secrets.REMOTE_SERVER01_IP}}:${{secrets.REMOTE_PROJECT_CATALOGUE}}
+        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar root@${{secrets.REMOTE_SERVER01_IP}}:www
       - name: load new docker image
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i ${{secrets.REMOTE_PROJECT_CATALOGUE}}/dingsai-backend.tar"
+        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i www/dingsai-backend.tar"
       - name: run project
         run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker run -d -p 8081:8081 --name dingsai-backend dingsai-backend:0.1"
