@@ -1,0 +1,35 @@
+name: Java CI/CD
+
+on:
+  push:
+    branches:
+      - master  # 设置你的默认分支，这里假设是 main 分支
+  pull_request:
+    branches:
+      - master  # 设置你的默认分支
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2
+      with:
+        server: ${{ secrets.SERVER_IP }}  # 替换为你的服务器 IP
+        username: ${{ secrets.SERVER_USERNAME }}  # 替换为你的服务器用户名
+        password: ${{ secrets.SERVER_PASSWORD }}  # 或者使用 SSH 密钥，取决于你的服务器配置
+        port: ${{ secrets.SERVER_PORT }}  # 如果使用 SSH 密钥，你也可以在服务器上指定 SSH 端口
+        local_path: 'target\springSecurity_project-0.0.1-SNAPSHOT.jar'  # 替换为你的 Java 应用程序的 JAR 文件路径
+        remote_path: '/path/to/deploy'  # 替换为你想要部署到的远程服务器路径
