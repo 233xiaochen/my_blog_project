@@ -17,6 +17,9 @@ jobs:
         uses: docker/setup-buildx-action@v1
         with:
           driver-opts: path=/var/run/docker.sock
+          
+      - name: Save Docker Buildx Info
+        run: echo "BUILDX_INFO=$(docker buildx version --json)" >> $GITHUB_ENV
 
       - name: Build Docker image  # 构建 Docker 镜像
         run: |
