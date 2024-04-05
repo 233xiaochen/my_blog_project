@@ -28,9 +28,9 @@ jobs:
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2
       with:
-        server: ${{ secrets.SERVER_IP }}  # 替换为你的服务器 IP
-        username: ${{ secrets.SERVER_USERNAME }}  # 替换为你的服务器用户名
-        password: ${{ secrets.SERVER_PASSWORD }}  # 或者使用 SSH 密钥，取决于你的服务器配置
-        port: ${{ secrets.SERVER_PORT }}  # 如果使用 SSH 密钥，你也可以在服务器上指定 SSH 端口
+        server: 124.71.99.191  # 替换为你的服务器 IP
+        username: chen  # 替换为你的服务器用户名
+        password: use6953136  # 或者使用 SSH 密钥，取决于你的服务器配置
+        port: 22  # 如果使用 SSH 密钥，你也可以在服务器上指定 SSH 端口
         local_path: 'target\springSecurity_project-0.0.1-SNAPSHOT.jar'  # 替换为你的 Java 应用程序的 JAR 文件路径
-        remote_path: '/path/to/deploy'  # 替换为你想要部署到的远程服务器路径
+        remote_path: 'www'  # 替换为你想要部署到的远程服务器路径
