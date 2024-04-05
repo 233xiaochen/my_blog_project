@@ -24,7 +24,7 @@ jobs:
       uses: garygrossgarten/github-action-scp@release
       with:
           local: target/springSecurity_project-0.0.1-SNAPSHOT.jar
-          remote: www/springSecurity_project-0.0.1-SNAPSHOT.jar
+          remote: springSecurity_project-0.0.1-SNAPSHOT.jar
           host: 124.71.99.191
           username: chen
           password: use6953136
@@ -37,6 +37,5 @@ jobs:
           password: use6953136
           port: 22
           script: |
-            cd /www
             nohup java -jar springSecurity_project-0.0.1-SNAPSHOT.jar > wechart.log 2>&1 &
 
