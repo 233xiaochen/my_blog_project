@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/springSecurity_project-0.0.1-SNAPSHOT.jar app.jar
 
 # 暴露容器的端口
-EXPOSE 8080
+EXPOSE 8888
 
 # 容器启动时运行的命令
 CMD ["java", "-jar", "app.jar"]
