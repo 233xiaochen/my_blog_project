@@ -1,37 +1,44 @@
-name: Java CI/CD
-
+name: Java CI with Maven
+​
 on:
   push:
-    branches:
-      - master  # 设置你的默认分支，这里假设是 main 分支
+    branches: [ "master" ] 
   pull_request:
-    branches:
-      - master  # 设置你的默认分支
-
+    branches: [ "master" ] 
+​
+# 工作流具体执行的任务
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'      # 使用 AdoptOpenJDK
-        java-version: '8'          # 设置 Java 版本为 8
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        REMOTE_HOST: 124.71.99.191  # 替换为你的服务器 IP
-        REMOTE_USER: chen  # 替换为你的服务器用户名
-        password: use6953136  # 或者使用 SSH 密钥，取决于你的服务器配置
-        REMOTE_PORT: 22  # 如果使用 SSH 密钥，你也可以在服务器上指定 SSH 端口
-        local_path: 'target/springSecurity_project-0.0.1-SNAPSHOT.jar'  # 替换为你的 Java 应用程序的 JAR 文件路径
-        remote_path: './'  # 替换为你想要部署到的远程服务器路径
+​
+    runs-on: ubuntu-latest # 运行在虚拟机上，指定虚拟机及其版本
+    steps:
+      - name: pull latest code
+        uses: actions/checkout@v3 # 使用官方的checkout action，用于将仓库中的最新代码检查并拉取到工作目录中
+​
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3 # 安装java环境的action
+        with:
+          java-version: '8.0' # 指定jkd版本
+          distribution: 'temurin'
+          cache: maven # 使用maven缓存，避免每次构建项目时都要重新下载maven依赖
+​
+      - name: Build docker image
+        run: |                                     # run：该步骤要执行的命令，| 代表可以有多条命令
+          docker build -t dingsai-backend:0.1 .    # 构建docker镜像，命令最后的点代表Dockerfile所在目录
+          docker save -o dingsai-backend.tar dingsai-backend:0.1 # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
+​
+      - name: delete old docker image
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
+​
+        # 删除旧的docker镜像压缩包
+      - name: delete old docker tar
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "rm -f dingsai-backend.tar"
+        # 上传新的docker镜像
+      - name: upload new docker image and start-up script
+        run: sshpass -p use6953136 scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar chen@124.71.99.191:./
+        # 加载tar文件，加载docker镜像
+      - name: load new docker image
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker load -i ./dingsai-backend.tar"
+        # docker run 运行，启动容器
+      - name: run project
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker run -d -p 8081:8081 --name dingsai-backend dingsai-backend:0.1"
