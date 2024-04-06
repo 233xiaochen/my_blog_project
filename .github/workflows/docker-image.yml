@@ -16,3 +16,8 @@ jobs:
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Push Docker images to registry
+      run: |
+        echo $DOCKER_PASSWORD | docker login 124.71.99.191 --username $DOCKER_USERNAME --password-stdin
+        docker push 124.71.99.191/your-image-name:$(date +%s)
