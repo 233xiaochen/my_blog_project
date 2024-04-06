@@ -1,35 +1,36 @@
-name: Build and Deploy Java App to Remote Server
- 
+name: Java CI/CD
+
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master  # 设置你的默认分支，这里假设是 main 分支
+  pull_request:
+    branches:
+      - master  # 设置你的默认分支
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code  # 拉取代码
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx  # 设置 Docker Buildx，用于构建多平台镜像
-        uses: docker/setup-buildx-action@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'      # 使用 AdoptOpenJDK
+        java-version: '8'          # 设置 Java 版本为 8
 
-      - name: Build Docker image  # 构建 Docker 镜像
-        run: |
-          docker buildx create --name mybuilder
-          docker buildx use mybuilder
-          docker buildx inspect --bootstrap
-          docker buildx build --platform linux/amd64,linux/arm64 -t spring-boot-app:latest .
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
-      - name: Deploy to remote server  # 部署到远程服务器
-        uses: appleboy/ssh-action@master
-        with:
-          host: 124.71.99.191
-          username: chen
-          password: use6953136
-          script: |
-            docker stop spring-boot-app || true
-            docker rm spring-boot-app || true
-            docker load < spring-boot-app-latest.tar  # 从本地加载 Docker 镜像
-            docker run -d --name spring-boot-app -p 8080:8080 spring-boot-app:latest
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2
+      with:
+        server: 124.71.99.191  # 替换为你的服务器 IP
+        username: chen  # 替换为你的服务器用户名
+        password: use6953136  # 或者使用 SSH 密钥，取决于你的服务器配置
+        port: 22  # 如果使用 SSH 密钥，你也可以在服务器上指定 SSH 端口
+        local_path: 'target/springSecurity_project-0.0.1-SNAPSHOT.jar'  # 替换为你的 Java 应用程序的 JAR 文件路径
+        remote_path: './'  # 替换为你想要部署到的远程服务器路径
