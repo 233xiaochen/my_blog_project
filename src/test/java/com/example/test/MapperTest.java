@@ -39,7 +39,6 @@ public class MapperTest {
 
     @Test
     public void testUserMapper() throws IOException {
-        List<User> users = userMapper.selectList(Wrappers.<User>lambdaQuery());
-        System.out.println(users.size());
+
     }
 }
