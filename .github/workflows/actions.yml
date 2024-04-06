@@ -28,7 +28,7 @@ jobs:
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2
       with:
-        SSH_PRIVATE_KEY: dd
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         REMOTE_HOST: 124.71.99.191  # 替换为你的服务器 IP
         REMOTE_USER: chen  # 替换为你的服务器用户名
         password: use6953136  # 或者使用 SSH 密钥，取决于你的服务器配置
