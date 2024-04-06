@@ -3,28 +3,33 @@ name: Build and Deploy Java App to Remote Server
 on:
   push:
     branches: [ master ]
+
 jobs:
-  develop_build:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+
     steps:
-      - name: 拉取最新提交的代码
-        uses: actions/checkout@v3
+      - name: Checkout code  # 拉取代码
+        uses: actions/checkout@v2
 
-      - name: 设置jdk
-        uses: actions/setup-java@v3
+      - name: Set up Docker Buildx  # 设置 Docker Buildx，用于构建多平台镜像
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image  # 构建 Docker 镜像
+        run: |
+          docker buildx create --name mybuilder
+          docker buildx use mybuilder
+          docker buildx inspect --bootstrap
+          docker buildx build --platform linux/amd64,linux/arm64 -t spring-boot-app:latest .
+
+      - name: Deploy to remote server  # 部署到远程服务器
+        uses: appleboy/ssh-action@master
         with:
-          distribution: 'temurin'
-          java-version: '8'
-          cache: 'maven'
-
-      - name: 项目打包
-        run: mvn -B package
-
-      - name: 删除旧的jar包以及运行脚本
-        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "sudo cd /root/GitHub_Action && sudo rm -rf ./*"
-
-      - name: 上传jar包和启动脚本到服务器中
-        run: sshpass -p use6953136 scp -r -o StrictHostKeyChecking=no ./target/springSecurity_project-0.0.1-SNAPSHOT.jar ./run.sh chen@124.71.99.191:/root/
-
-      - name: 启动项目
-        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "cd /root/GitHub_Action && chmod +x run.sh && ./run.sh"
+          host: 124.71.99.191
+          username: chen
+          password: use6953136
+          script: |
+            docker stop spring-boot-app || true
+            docker rm spring-boot-app || true
+            docker load < spring-boot-app-latest.tar  # 从本地加载 Docker 镜像
+            docker run -d --name spring-boot-app -p 8080:8080 spring-boot-app:latest
