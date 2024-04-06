@@ -9,26 +9,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest 
-      steps:
+    steps:
       - name: pull latest code
-          uses: actions/checkout@v3 
-        - name: Set up JDK 1.8
-          uses: actions/setup-java@v3
-          with:
-            java-version: '8.0' 
-            distribution: 'temurin'
-            cache: maven
-        - name: Build docker image
-          run: |                               
-            docker build -t dingsai-backend:0.1 .
-            docker save -o dingsai-backend.tar dingsai-backend:0.1
-        - name: delete old docker image
-          run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
-        - name: delete old docker tar
-          run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "rm -f dingsai-backend.tar"
-        - name: upload new docker image and start-up script
-          run: sshpass -p use6953136 scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar chen@124.71.99.191:./
-        - name: load new docker image
-          run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker load -i ./dingsai-backend.tar"
-        - name: run project
-          run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker run -d -p 8081:8081 --name dingsai-backend dingsai-backend:0.1"
+        uses: actions/checkout@v3 
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8.0' 
+          distribution: 'temurin'
+          cache: maven
+      - name: Build docker image
+        run: |                               
+          docker build -t dingsai-backend:0.1 .
+          docker save -o dingsai-backend.tar dingsai-backend:0.1
+      - name: delete old docker image
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
+      - name: delete old docker tar
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "rm -f dingsai-backend.tar"
+      - name: upload new docker image and start-up script
+        run: sshpass -p use6953136 scp -r -o StrictHostKeyChecking=no ./dingsai-backend.tar chen@124.71.99.191:./
+      - name: load new docker image
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker load -i ./dingsai-backend.tar"
+      - name: run project
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker run -d -p 8081:8081 --name dingsai-backend dingsai-backend:0.1"
