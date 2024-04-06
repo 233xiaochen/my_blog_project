@@ -2,7 +2,7 @@ name: Build and Deploy Java App to Remote Server
  
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 jobs:
   develop_build:
     runs-on: ubuntu-latest
