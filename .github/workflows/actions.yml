@@ -33,4 +33,4 @@ jobs:
       - name: load new docker image
         run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker load -i ./dingsai-backend.tar"
       - name: run project
-        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker run -d -p 8888:8888 --name dingsai-backend dingsai-backend:0.1"
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker run -d -p 8888:8888 --name spring-security-project --network java-mysql-network dingsai-backend:0.1"
