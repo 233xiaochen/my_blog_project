@@ -22,10 +22,10 @@ jobs:
         run: mvn clean package
       - name: Build docker image
         run: |                               
-          docker build -t dingsai-backend:0.1 .
-          docker save -o dingsai-backend.tar dingsai-backend:0.1
+          docker build -t spring-security-project:0.1 .
+          docker save -o dingsai-backend.tar spring-security-project:0.1
       - name: delete old docker image
-        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker stop dingsai-backend || true && docker rm dingsai-backend || true && docker rmi dingsai-backend:0.1 || true"
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "docker stop spring-security-project || true && docker rm spring-security-project || true && docker rmi spring-security-project:0.1 || true"
       - name: delete old docker tar
         run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "rm -f dingsai-backend.tar"
       - name: upload new docker image and start-up script
