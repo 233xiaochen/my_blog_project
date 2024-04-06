@@ -21,7 +21,7 @@ jobs:
         run: mvn -B package
 
       - name: 删除旧的jar包以及运行脚本
-        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "cd /root/GitHub_Action && rm -rf ./*"
+        run: sshpass -p use6953136 ssh -o StrictHostKeyChecking=no chen@124.71.99.191 "sudo cd /root/GitHub_Action && sudo rm -rf ./*"
 
       - name: 上传jar包和启动脚本到服务器中
         run: sshpass -p use6953136 scp -r -o StrictHostKeyChecking=no ./target/springSecurity_project-0.0.1-SNAPSHOT.jar ./run.sh root@124.71.99.191:/root/GitHub_Action
