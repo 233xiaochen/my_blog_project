@@ -5,7 +5,7 @@ FROM openjdk:8
 WORKDIR /app
 
 # 将本地的 JAR 文件复制到镜像中的 /app 目录
-COPY springSecurity_project-0.0.1-SNAPSHOT.jar app.jar
+COPY target/springSecurity_project-0.0.1-SNAPSHOT.jar app.jar
 
 # 暴露容器的端口
 EXPOSE 8080
