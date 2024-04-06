@@ -1,12 +1,13 @@
 spring:
   datasource:
     url: jdbc:mysql://mysql-container/spring_security?characterEncoding=utf-8&serverTimezone=UTC
-#    url: jdbc:mysql://mysql-container/spring_security?characterEncoding=utf-8&serverTimezone=UTC
+#    url: jdbc:mysql://124.71.99.191:3340/spring_security?characterEncoding=utf-8&serverTimezone=UTC
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: 124.71.99.191
+    host: 192.168.9.223
+#    host: 124.71.99.191
     port: 1968
     password: use6953136
 mybatis-plus:
