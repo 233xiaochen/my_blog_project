@@ -15,9 +15,9 @@ jobs:
       run: mvn clean package
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%Y%m%d%H%M)
+      
     - name: Push Docker images to registry
       run: |
-        echo $DOCKER_PASSWORD | docker login 124.71.99.191 --username $DOCKER_USERNAME --password-stdin
-        docker push 124.71.99.191/your-image-name:$(date +%s)
+        docker login 124.71.99.191 --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker push 124.71.99.191/my-image-name:$(date +%Y%m%d%H%M)
