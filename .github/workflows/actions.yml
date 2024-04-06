@@ -1,11 +1,11 @@
 name: Java CI with Maven
-​
 on:
   push:
-    branches: [ "master" ] 
+    branches:
+      - master  
   pull_request:
-    branches: [ "master" ] 
-​
+    branches:
+      - master
 # 工作流具体执行的任务
 jobs:
   build:
