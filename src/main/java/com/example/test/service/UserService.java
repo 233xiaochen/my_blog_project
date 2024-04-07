@@ -20,7 +20,6 @@ public interface UserService {
     boolean deactivateAccount(long id);
     //账号启用
     boolean enableAccount(long id);
-    //用户绑定角色
 
     //用户绑定部门
 

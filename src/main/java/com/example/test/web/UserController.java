@@ -2,6 +2,8 @@ package com.example.test.web;
 
 import com.example.test.pojo.ResponseResult;
 import com.example.test.pojo.User;
+import com.example.test.service.RoleMenuSerivce;
+import com.example.test.service.UserRoleService;
 import com.example.test.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,12 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userServcie;
-
+    @Autowired
+    private UserRoleService userRoleService;
+    @Autowired
+    private RoleMenuSerivce roleMenuSerivce;
     /**
      * 用户登录
-     *
      * @param user username、password
      * @return 登录信息
      */
@@ -32,7 +36,6 @@ public class UserController {
 
     /**
      * 用户注销
-     *
      * @return 注销信息
      */
     @PostMapping("loginOut")
@@ -50,8 +53,15 @@ public class UserController {
         return userServcie.register(user);
     }
 
-//    @PostMapping("register")
-//    public ResponseResult<Map<String,String>> register(User user) {
-//        return userServcie.register(user);
-//    }
+    @PostMapping("userBindRole")
+    public ResponseResult<Long> bindRole(String userId,String[] ids) {
+        userRoleService.bindRole(userId,ids);
+        return new ResponseResult<>(200,"绑定角色成功");
+    }
+
+    @PostMapping("roleBindMenu")
+    public ResponseResult<Long> roleBindMenu(String roleId,String[] ids) {
+        roleMenuSerivce.bindRole(roleId,ids);
+        return new ResponseResult<>(200,"绑定角色成功");
+    }
 }
