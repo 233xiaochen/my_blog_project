@@ -1,7 +1,6 @@
 package com.example.test.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.test.config.RedisCache;
@@ -23,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static javax.security.auth.callback.ConfirmationCallback.NO;
-
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
@@ -36,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseResult<Map<String,String>> login(User user) {
+    public ResponseResult<Map<String, String>> login(User user) {
         UsernamePasswordAuthenticationToken authenticationToken = new
                 UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
         Authentication authenticate = null;
@@ -50,9 +47,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
         //三十分钟
-        String accessToken = JwtUtil.createJWT(userId,30*60*1000L);
+        String accessToken = JwtUtil.createJWT(userId, 30 * 60 * 1000L);
         //七天
-        String refreshToken = JwtUtil.createJWT(userId,7*24*60*60*1000L);
+        String refreshToken = JwtUtil.createJWT(userId, 7 * 24 * 60 * 60 * 1000L);
         //authenticate存入redis
         redisCache.setCacheObject("login:" + userId, loginUser);
         //把token响应给前端
@@ -63,7 +60,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public ResponseResult<Map<String,String>> loginOut() {
+    public ResponseResult<Map<String, String>> loginOut() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
@@ -73,11 +70,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public ResponseResult<Map<String,String>> register(User user) {
+    public ResponseResult<Map<String, String>> register(User user) {
         //重名校验
         User selectOne = baseMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUserName, user.getUserName()));
-        if (!Objects.isNull(selectOne)){
-            return new ResponseResult<>(600,"用户名重复");
+        if (!Objects.isNull(selectOne)) {
+            return new ResponseResult<>(600, "用户名重复");
         }
         //设置随机昵称
         user.setNickName(getRandomName());
@@ -89,6 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 设置随机昵称
+     *
      * @return
      */
     public String getRandomName() {
@@ -101,27 +99,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 停用账号
+     *
      * @param id
      * @return
      */
-    public boolean deactivateAccount(long id){
+    public boolean deactivateAccount(long id) {
         return update(Wrappers.<User>lambdaUpdate()
-                .set(User::getStatus,"1")
-                .eq(User::getDelFlag,"0")
-                .eq(User::getId,id));
+                .set(User::getStatus, "1")
+                .eq(User::getDelFlag, "0")
+                .eq(User::getId, id));
     }
 
     /**
      * 启用账号
+     *
      * @param id
      * @return
      */
     @Override
     public boolean enableAccount(long id) {
         return update(Wrappers.<User>lambdaUpdate()
-                .set(User::getStatus,"0")
-                .eq(User::getDelFlag,"0")
-                .eq(User::getId,id));
+                .set(User::getStatus, "0")
+                .eq(User::getDelFlag, "0")
+                .eq(User::getId, id));
     }
 
 }

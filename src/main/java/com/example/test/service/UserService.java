@@ -20,17 +20,12 @@ public interface UserService {
     boolean deactivateAccount(long id);
     //账号启用
     boolean enableAccount(long id);
-    //查询角色
-    //添加角色
-    //修改角色
-    //删除角色
-    //查询菜单
-    //添加菜单
-    //修改菜单
-    //删除菜单
     //用户绑定角色
+
     //用户绑定部门
+
     //部门绑定角色
+
     //角色绑定菜单
 
 }

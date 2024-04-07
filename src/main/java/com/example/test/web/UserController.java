@@ -49,4 +49,9 @@ public class UserController {
     public ResponseResult<Map<String,String>> register(User user) {
         return userServcie.register(user);
     }
+
+//    @PostMapping("register")
+//    public ResponseResult<Map<String,String>> register(User user) {
+//        return userServcie.register(user);
+//    }
 }
