@@ -25,6 +25,5 @@ public interface UserService {
 
     //部门绑定角色
 
-    //角色绑定菜单
 
 }

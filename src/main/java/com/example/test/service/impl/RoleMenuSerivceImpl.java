@@ -18,7 +18,7 @@ import java.util.List;
 public class RoleMenuSerivceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuSerivce {
 
     @Override
-    public void bindRole(String roleId, String[] ids) {
+    public void bindMenu(String roleId, String[] ids) {
         List<RoleMenu> list = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             RoleMenu role = new RoleMenu();

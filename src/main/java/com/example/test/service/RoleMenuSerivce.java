@@ -6,6 +6,6 @@ package com.example.test.service;
  */
 public interface RoleMenuSerivce {
 
-    void bindRole(String roleId, String[] ids);
+    void bindMenu(String roleId, String[] ids);
 
 }

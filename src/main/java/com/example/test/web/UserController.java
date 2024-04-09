@@ -61,7 +61,7 @@ public class UserController {
 
     @PostMapping("roleBindMenu")
     public ResponseResult<Long> roleBindMenu(String roleId,String[] ids) {
-        roleMenuSerivce.bindRole(roleId,ids);
-        return new ResponseResult<>(200,"绑定角色成功");
+        roleMenuSerivce.bindMenu(roleId,ids);
+        return new ResponseResult<>(200,"绑定菜单成功");
     }
 }
