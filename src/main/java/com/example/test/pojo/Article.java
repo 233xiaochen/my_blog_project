@@ -23,6 +23,7 @@ import java.util.Date;
 @NoArgsConstructor
 @TableName("article")
 public class Article implements Serializable {
+    private static final long serialVersionUID = -54979041104115340L;
     //标识
     @TableId
     private String id;
@@ -34,29 +35,29 @@ public class Article implements Serializable {
     private String content;
     //收藏量
     @TableField("collect")
-    private int collect;
+    private String collect;
     //点赞量
     @TableField("like_count")
-    private int likeCount;
+    private String likeCount;
     //不喜欢量
     @TableField("dislike_count")
-    private int dislikeCount;
+    private String dislikeCount;
     //评论数量
     @TableField("comment_volume")
-    private int commentVolume;
+    private String commentVolume;
     //浏览量
     @TableField("view_volume")
-    private int viewVolume;
+    private String viewVolume;
     //用户
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private Long createBy;
+    private String createBy;
     //创建时间
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date createTime;
     //更新人
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private Long updateBy;
+    private String updateBy;
     //更新时间
     @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")

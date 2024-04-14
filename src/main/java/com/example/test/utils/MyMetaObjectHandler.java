@@ -19,8 +19,6 @@ import static com.example.test.utils.UserUtils.getCurUserAccount;
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
-
-
     @Override
     public void insertFill(MetaObject metaObject) {
         log.info("start insert fill ....");

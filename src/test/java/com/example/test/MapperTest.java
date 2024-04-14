@@ -2,9 +2,12 @@ package com.example.test;
 
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.example.test.mapper.ArticleMapper;
 import com.example.test.mapper.MenuMapper;
 import com.example.test.mapper.UserMapper;
+import com.example.test.pojo.Article;
 import com.example.test.pojo.User;
+import com.example.test.service.ArticleService;
 import com.example.test.service.UserService;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -27,6 +30,8 @@ public class MapperTest {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private ArticleMapper articleMapper;
 
     @Autowired
     private UserService userService;
@@ -39,7 +44,6 @@ public class MapperTest {
     private RestHighLevelClient restHighLevelClient;
 
     @Test
-    public void testUserMapper() throws IOException {
-
+    public void testUserMapper()  {
     }
 }

@@ -2,9 +2,7 @@ package com.example.test.web;
 
 import com.example.test.pojo.Menu;
 import com.example.test.pojo.ResponseResult;
-import com.example.test.pojo.Role;
 import com.example.test.service.MenuService;
-import com.example.test.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

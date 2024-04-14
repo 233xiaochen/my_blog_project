@@ -2,7 +2,6 @@ package com.example.test.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.test.pojo.RoleMenu;
-import com.example.test.pojo.UserRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

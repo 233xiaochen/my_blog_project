@@ -3,7 +3,6 @@ package com.example.test.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.test.mapper.RoleMenuMapper;
 import com.example.test.pojo.RoleMenu;
-import com.example.test.pojo.UserRole;
 import com.example.test.service.RoleMenuSerivce;
 import org.springframework.stereotype.Service;
 

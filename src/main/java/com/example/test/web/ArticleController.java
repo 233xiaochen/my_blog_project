@@ -23,9 +23,9 @@ public class ArticleController {
     private ArticleService articleService;
 
     @PostMapping("save")
-    public ResponseResult addOrUpdate(Article article) {
-        articleService.saveArticle(article);
-        return new ResponseResult<>(200,"保存文章成功！");
+    public ResponseResult<String> addOrUpdate(Article article) {
+        String articleId = articleService.saveArticle(article);
+        return new ResponseResult<>(200,"保存文章成功！",articleId);
     }
 
     @GetMapping("query")
