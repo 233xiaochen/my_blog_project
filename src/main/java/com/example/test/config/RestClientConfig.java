@@ -15,6 +15,7 @@ public class RestClientConfig extends AbstractElasticsearchConfiguration {
         final ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder()
                         .connectedTo("124.71.99.191:9200")
+                        .withSocketTimeout(100000)
                         .build();
         return RestClients.create(clientConfiguration).rest();
     }

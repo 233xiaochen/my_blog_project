@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author： chenlin
  * @create： 2024/4/9 13:48
@@ -38,5 +40,11 @@ public class ArticleController {
     public ResponseResult<Boolean> delete(String id) {
         articleService.delete(id);
         return new ResponseResult<>(200,"删除文章成功！");
+    }
+
+    @PostMapping("queryList")
+    public ResponseResult<List<Article>> queryList(String keyWorld,String pageNumber,String pageSize) {
+        List<Article> list = articleService.queryList(keyWorld,pageNumber,pageSize);
+        return new ResponseResult<>(200,list);
     }
 }
