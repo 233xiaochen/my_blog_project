@@ -10,6 +10,7 @@ spring:
 #    host: 124.71.99.191
     port: 1968
     password: use6953136
+    timeout: 60000
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
 

@@ -1,5 +1,6 @@
 package com.example.blog.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.blog.mapper.ArticleMapper;
@@ -132,8 +133,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .field("title").field("content")
                 .preTags("<span style = 'color:red;'>")
                 .postTags("</span>");
+
         sourceBuilder
-                .query(QueryBuilders.multiMatchQuery(keyWorld, "title", "content"))
+                .query(!StrUtil.isEmpty(keyWorld) ? QueryBuilders.multiMatchQuery(keyWorld, "title", "content") : QueryBuilders.matchAllQuery())
                 .from((Integer.parseInt(pageNumber)-1)*Integer.parseInt(pageSize)).size(Integer.parseInt(pageSize))
                 .sort("update_time", SortOrder.DESC)
                 .fetchSource(new String[]{}, new String[]{})
