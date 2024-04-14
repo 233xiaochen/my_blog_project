@@ -3,7 +3,7 @@ spring:
     druid:
       # 指定数据源类型为DruidDataSource
       db-type: com.alibaba.druid.pool.DruidDataSource
-      url: jdbc:mysql://mysql-container/spring_security?characterEncoding=utf-8&serverTimezone=UTC
+      url: jdbc:mysql://mysql-container/spring_security?characterEncoding=utf-8&serverTimezone=UTC&useSSL=false
 #      url: jdbc:mysql://124.71.99.191:3340/spring_security?characterEncoding=utf-8&serverTimezone=UTC
       username: root
       password: 123456
