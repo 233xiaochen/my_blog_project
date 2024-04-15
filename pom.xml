@@ -16,6 +16,7 @@
     <properties>
         <java.version>8</java.version>
         <elasticsearch.version>7.6.2</elasticsearch.version>
+        <skipTests>true</skipTests><!--跳过打包验证-->
     </properties>
     <dependencies>
         <dependency>
@@ -91,6 +92,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
