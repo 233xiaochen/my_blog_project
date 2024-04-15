@@ -15,14 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootTest
 public class MapperTest {
 
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private ArticleMapper articleMapper;
-
-    @Autowired
-    private UserService userService;
-
 
     @Autowired
     private PasswordEncoder passwordEncoder;
