@@ -22,8 +22,8 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         List<UserRole> list = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             UserRole role = new UserRole();
-            role.setUser_id(userId);
-            role.setUser_id(ids[i]);
+            role.setUserId(userId);
+            role.setRoleId(ids[i]);
             list.add(role);
         }
         saveBatch(list);

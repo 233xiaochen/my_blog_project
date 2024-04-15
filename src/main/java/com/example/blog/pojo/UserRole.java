@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 @TableName("sys_user_role")
 public class UserRole {
 
-    @TableField("userId")
-    private String user_id;
+    @TableField("user_id")
+    private String userId;
 
-    @TableField("roleId")
-    private String role_id;
+    @TableField("role_id")
+    private String roleId;
 
 }

@@ -21,8 +21,8 @@ public class RoleMenuSerivceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
         List<RoleMenu> list = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             RoleMenu role = new RoleMenu();
-            role.setRole_id(roleId);
-            role.setMenu_id(ids[i]);
+            role.setRoleId(roleId);
+            role.setMenuId(ids[i]);
             list.add(role);
         }
         saveBatch(list);

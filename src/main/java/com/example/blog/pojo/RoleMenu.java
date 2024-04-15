@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 @TableName("sys_role_menu")
 public class RoleMenu {
 
-    @TableField("roleId")
-    private String role_id;
+    @TableField("role_id")
+    private String roleId;
 
-    @TableField("menuId")
-    private String menu_id;
+    @TableField("menu_id")
+    private String menuId;
 
 }
