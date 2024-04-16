@@ -1,13 +1,16 @@
 package com.example.blog.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.blog.mapper.RoleMenuMapper;
 import com.example.blog.pojo.RoleMenu;
 import com.example.blog.service.RoleMenuSerivce;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author： chenlin
@@ -26,5 +29,12 @@ public class RoleMenuSerivceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
             list.add(role);
         }
         saveBatch(list);
+    }
+
+    @Override
+    public List<String> getMenuIdsByRole(String roleId) {
+        return list(Wrappers.<RoleMenu>lambdaQuery()
+                .eq(RoleMenu::getRoleId,roleId))
+                .stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
     }
 }

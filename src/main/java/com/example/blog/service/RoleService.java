@@ -1,5 +1,7 @@
 package com.example.blog.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.blog.pojo.Article;
 import com.example.blog.pojo.Role;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
  * @create： 2024/4/7 10:45
  */
 
-public interface RoleService {
+public interface RoleService extends IService<Role> {
 
     //查询角色
     List<Role> query(Role role);

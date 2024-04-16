@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -63,5 +64,11 @@ public class UserController {
     public ResponseResult<Long> roleBindMenu(String roleId,String[] ids) {
         roleMenuSerivce.bindMenu(roleId,ids);
         return new ResponseResult<>(200,"绑定菜单成功");
+    }
+
+    @PostMapping("getMenuIdsByRole")
+    public ResponseResult<List<String>> getMenuIdsByRole(String roleId) {
+        List<String> menuIdsByRole = roleMenuSerivce.getMenuIdsByRole(roleId);
+        return new ResponseResult<>(200,menuIdsByRole);
     }
 }
