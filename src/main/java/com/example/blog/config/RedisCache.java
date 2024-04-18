@@ -226,4 +226,22 @@ public class RedisCache {
     public Collection<String> keys(final String pattern) {
         return redisTemplate.keys(pattern);
     }
+
+    /**
+     * 排行榜
+     * @param redisKey
+     * @param id
+     */
+    public void incrementScore(String redisKey,String id) {
+        redisTemplate.opsForZSet().incrementScore(redisKey, id, 1);
+    }
+//
+//    /**
+//     * 获取排行榜
+//     * @param redisKey
+//     * @param id
+//     */
+//    public List<Integer> getTopMovies(int n) {
+//        return redisTemplate.opsForZSet().reverseRange(REDIS_KEY, 0, n - 1);
+//    }
 }

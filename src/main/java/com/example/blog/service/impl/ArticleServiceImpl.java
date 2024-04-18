@@ -103,6 +103,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+        //增加文章浏览量
+
         return article;
     }
 

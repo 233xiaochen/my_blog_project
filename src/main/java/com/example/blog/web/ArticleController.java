@@ -30,6 +30,11 @@ public class ArticleController {
         return new ResponseResult<>(200,"保存文章成功！",articleId);
     }
 
+    /**
+     * 获取文章详情
+     * @param id 文章id
+     * @return 文章实体
+     */
     @GetMapping("query")
     public ResponseResult<Article> query(String id) {
         Article article = articleService.queryArticle(id);
@@ -42,6 +47,13 @@ public class ArticleController {
         return new ResponseResult<>(200,"删除文章成功！");
     }
 
+    /**
+     * 文章列表
+     * @param keyWorld 关键词
+     * @param pageNumber 1
+     * @param pageSize 10
+     * @return 文章列表
+     */
     @PostMapping("queryList")
     public ResponseResult<List<Article>> queryList(String keyWorld,String pageNumber,String pageSize) {
         List<Article> list = articleService.queryList(keyWorld,pageNumber,pageSize);
