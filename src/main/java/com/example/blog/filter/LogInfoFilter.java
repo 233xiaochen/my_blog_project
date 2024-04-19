@@ -31,11 +31,11 @@ public class LogInfoFilter extends OncePerRequestFilter implements Ordered {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String time = format.format(date);
-        log.info("Time          : " +time);
-        log.info("URL           : " +request.getRequestURI());
-        log.info("HTTP Method   : " +request.getMethod());
-        log.info("Class method  : " +request.getServletPath() + "." + request.getMethod());
-        log.info("IP            : " +request.getRemoteHost());
+//        log.info("Time          : " +time);
+//        log.info("URL           : " +request.getRequestURI());
+//        log.info("HTTP Method   : " +request.getMethod());
+//        log.info("Class method  : " +request.getServletPath() + "." + request.getMethod());
+//        log.info("IP            : " +request.getRemoteHost());
         filterChain.doFilter(request, response);
         MDC.clear();
     }
