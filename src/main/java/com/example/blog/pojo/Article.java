@@ -30,18 +30,39 @@ public class Article implements Serializable {
     //标题
     @TableField("title")
     private String title;
+    //文章描述
+    @TableField("description")
+    private String description;
     //内容
     @TableField("content")
     private String content;
+    //图片地址
+    @TableField("img_src")
+    private String imgSrc;
+    //文章类型
+    @TableField("type")
+    private String type;
+    //文章类型名称
+    @TableField("type_name")
+    private String typeName;
+    //是否置顶 1制定
+    @TableField("is_top")
+    private String isTop;
+    //博客二级分类标识
+    @TableField("blog_two_id")
+    private String blogTwoId;
+    //博客三级分类标识
+    @TableField("blog_three_id")
+    private String blogThreeId;
+    //博客分类名称
+    @TableField("catg_name")
+    private String catgName;
     //收藏量
     @TableField("collect")
     private String collect;
     //点赞量
     @TableField("like_count")
     private String likeCount;
-    //不喜欢量
-    @TableField("dislike_count")
-    private String dislikeCount;
     //评论数量
     @TableField("comment_volume")
     private String commentVolume;

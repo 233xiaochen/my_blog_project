@@ -17,5 +17,11 @@ public interface ArticleService extends IService<Article>  {
 
     void delete(String id);
 
-    List<Article> queryList(String keyWorld,String pageNumber,String pageSize);
+    List<Article> queryList(String keyWorld,String pageNumber,String pageSize,String type);
+
+    long queryArticleCount(String keyWorld,String type);
+
+    List<Article> queryArticleTopTen(String blogCatgId);
+
+    String queryCountBySql();
 }

@@ -230,18 +230,15 @@ public class RedisCache {
     /**
      * 排行榜
      * @param redisKey
-     * @param id
      */
-    public void incrementScore(String redisKey,String id) {
-        redisTemplate.opsForZSet().incrementScore(redisKey, id, 1);
+    public void addLeaderboard(String redisKey,String json) {
+        redisTemplate.opsForZSet().incrementScore(redisKey, json, 1);
     }
-//
-//    /**
-//     * 获取排行榜
-//     * @param redisKey
-//     * @param id
-//     */
-//    public List<Integer> getTopMovies(int n) {
-//        return redisTemplate.opsForZSet().reverseRange(REDIS_KEY, 0, n - 1);
-//    }
+
+    /**
+     * 获取排行榜
+     */
+    public Set<String> getLeaderboard(String redisKey,int n) {
+        return redisTemplate.opsForZSet().reverseRange(redisKey, 0, n - 1);
+    }
 }

@@ -2,7 +2,12 @@ package com.example.blog.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.blog.config.RedisCache;
 import com.example.blog.mapper.ArticleMapper;
 import com.example.blog.pojo.Article;
 import com.example.blog.service.ArticleService;
@@ -21,6 +26,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -30,9 +38,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -48,6 +58,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private RedisCache redisCache;
 
 
     private static final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(10);
@@ -60,7 +72,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             //保存文档到es
             IndexRequest indexRequest = new IndexRequest("article");
             indexRequest.id(article.getId());
-            indexRequest.source(JSONUtil.toJsonStr(article), XContentType.JSON);
+            JSONObject object = JSONObject.parseObject(JSONUtil.toJsonStr(article));
+            object.remove("id");
+            object.remove("content");
+            object.remove("delFlag");
+            indexRequest.source(JSONUtil.toJsonStr(object), XContentType.JSON);
             AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>();
             future.set(scheduler.scheduleWithFixedDelay(() -> {
                 try {
@@ -73,6 +89,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                     log.error(e.getMessage(), e);
                 }
             }, 0, 8, TimeUnit.SECONDS));
+            //添加排行榜
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",article.getId());
+            map.put("title", article.getTitle());
+            redisCache.addLeaderboard("articleRanking",JSONUtil.toJsonStr(map));
         } else {
             updateById(article);
             UpdateRequest updateRequest = new UpdateRequest("article", article.getId());
@@ -95,17 +116,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Article queryArticle(String id) {
-        GetRequest getRequest = new GetRequest("article", id);
-        Article article = null;
-        try {
-            GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
-            article = JSONUtil.toBean(getResponse.getSourceAsString(), Article.class);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        Article byId = getById(id);
         //增加文章浏览量
-
-        return article;
+        Map<String,Object> map = new HashMap<>();
+        map.put("id",byId.getId());
+        map.put("title", byId.getTitle());
+        redisCache.addLeaderboard("articleRanking",JSONUtil.toJsonStr(map));
+        return byId;
     }
 
     @Override
@@ -127,24 +144,32 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public List<Article> queryList(String keyWorld, String pageNumber, String pageSize) {
+    public List<Article> queryList(String keyWorld, String pageNumber, String pageSize,String type) {
         SearchRequest searchRequest = new SearchRequest("article");
+        SearchResponse searchResponse = null;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         HighlightBuilder highlightBuilder = new HighlightBuilder();
-        highlightBuilder.requireFieldMatch(false)
-                .field("title").field("content")
-                .preTags("<span style = 'color:red;'>")
-                .postTags("</span>");
-
-        sourceBuilder
-                .query(!StrUtil.isEmpty(keyWorld) ? QueryBuilders.multiMatchQuery(keyWorld, "title", "content") : QueryBuilders.matchAllQuery())
-                .from((Integer.parseInt(pageNumber)-1)*Integer.parseInt(pageSize)).size(Integer.parseInt(pageSize))
-                .sort("update_time", SortOrder.DESC)
-                .fetchSource(new String[]{}, new String[]{})
-                .highlighter(highlightBuilder)
-                .postFilter(QueryBuilders.existsQuery("content"));
-        searchRequest.source(sourceBuilder);
-        SearchResponse searchResponse = null;
+        if ("1".equals(type) || null == type){
+            highlightBuilder.requireFieldMatch(false)
+                    .field("title").field("description")
+                    .preTags("<span style = 'color:red;'>")
+                    .postTags("</span>");
+            sourceBuilder
+                    .query(!StrUtil.isEmpty(keyWorld) ? QueryBuilders.multiMatchQuery(keyWorld, "title", "description") : QueryBuilders.matchAllQuery())
+                    .from((Integer.parseInt(pageNumber)-1)*Integer.parseInt(pageSize)).size(Integer.parseInt(pageSize))
+                    .sort("updateTime", SortOrder.DESC)
+                    .fetchSource(new String[]{}, new String[]{})
+                    .highlighter(highlightBuilder)
+                    .postFilter(QueryBuilders.existsQuery("description"));
+            searchRequest.source(sourceBuilder);
+        }else if ("2".equals(type)){
+            sourceBuilder
+                    .query(QueryBuilders.multiMatchQuery(keyWorld, "blogTwoId","blogThreeId"))
+                    .from((Integer.parseInt(pageNumber)-1)*Integer.parseInt(pageSize)).size(Integer.parseInt(pageSize))
+                    .sort("updateTime", SortOrder.DESC)
+                    .fetchSource(new String[]{}, new String[]{});
+            searchRequest.source(sourceBuilder);
+        }
         try {
             searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -158,15 +183,64 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         for (SearchHit hit : hits) {
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
             Article article = JSONUtil.toBean(hit.getSourceAsString(), Article.class);
+            article.setId(hit.getId());
             highlightFields.forEach((k, v) -> {
                 if ("title".equals(k)) {
                     article.setTitle(v.fragments()[0].toString());
-                } else if ("content".equals(k)) {
-                    article.setCollect(v.fragments()[0].toString());
+                } else if ("description".equals(k)) {
+                    article.setDescription(v.fragments()[0].toString());
                 }
             });
             articleList.add(article);
         }
         return articleList;
+    }
+
+    @Override
+    public long queryArticleCount(String keyWorld,String type) {
+        SearchRequest searchRequest = new SearchRequest("article");
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        SearchResponse searchResponse = null;
+        if ("1".equals(type) || null == type) {
+            sourceBuilder
+                    .query(!StrUtil.isEmpty(keyWorld) ? QueryBuilders.multiMatchQuery(keyWorld, "title", "description") : QueryBuilders.matchAllQuery());
+        }else if ("2".equals(type)){
+            sourceBuilder
+                    .query(QueryBuilders.multiMatchQuery(keyWorld, "blogTwoId", "blogThreeId"));
+        }
+        // 添加一个count聚合
+        sourceBuilder.aggregation(AggregationBuilders.count("total_count").field("_id"));
+        searchRequest.source(sourceBuilder);
+        try {
+            searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        if (Objects.isNull(searchResponse)) {
+            return 0;
+        }
+        // 获取count聚合的结果
+        Aggregations aggregations = searchResponse.getAggregations();
+        ValueCount totalCount = aggregations.get("total_count");
+        long totalHits = totalCount.getValue();
+        return totalHits;
+    }
+
+    @Override
+    public List<Article> queryArticleTopTen(String blogCatgId) {
+        Set<String> set = redisCache.getLeaderboard("articleRanking", 10);
+        List<Article> list = new ArrayList<>();
+        set.forEach(item -> {
+            Article bean = JSONUtil.toBean(item, Article.class);
+            list.add(bean);
+        });
+        return list;
+    }
+
+    @Override
+    public String queryCountBySql() {
+        long count = count(Wrappers.<Article>lambdaQuery()
+                .eq(Article::getDelFlag, "0"));
+        return String.valueOf(count);
     }
 }
