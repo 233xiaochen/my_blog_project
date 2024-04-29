@@ -1,5 +1,6 @@
 /target/
 /src/test/
+/catalina.base_IS_UNDEFINED/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
