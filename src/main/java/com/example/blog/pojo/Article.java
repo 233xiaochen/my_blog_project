@@ -57,6 +57,9 @@ public class Article implements Serializable {
     //博客分类名称
     @TableField("catg_name")
     private String catgName;
+    //博客分类名称
+    @TableField("catg_id")
+    private String catgId;
     //收藏量
     @TableField("collect")
     private String collect;
@@ -69,6 +72,12 @@ public class Article implements Serializable {
     //浏览量
     @TableField("view_volume")
     private String viewVolume;
+    //是否草稿
+    @TableField("is_draft")
+    private String isDraft;
+    //是否草稿
+    @TableField("is_public")
+    private String isPublic;
     //用户
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     private String createBy;

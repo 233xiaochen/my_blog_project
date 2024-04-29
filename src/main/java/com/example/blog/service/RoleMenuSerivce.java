@@ -1,7 +1,6 @@
 package com.example.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.blog.pojo.Article;
 import com.example.blog.pojo.RoleMenu;
 
 import java.util.List;

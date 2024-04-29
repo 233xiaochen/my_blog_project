@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // 对于登录接口 允许匿名访问
-            .antMatchers("/jrebel/leases","/myFriend/homePageList","/rotationChart/list","/blogCatg/classBar","/notice/frontList","/article/**","/user/login","/user/register","/token/refresh").anonymous()
+            .antMatchers("**","/jrebel/leases","/myFriend/homePageList","/rotationChart/list","/blogCatg/classBar","/notice/frontList","/article/**","/user/login","/user/register","/token/refresh").anonymous()
             .antMatchers("/druid/**").permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();
